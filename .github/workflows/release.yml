@@ -1,0 +1,33 @@
+# .github/workflows/release.yml
+name: Release Go Binary
+
+on:
+  release:
+    types: [created] # Trigger this workflow when a new release is created
+
+permissions:
+  contents: write # Grant write permissions to the workflow to create GitHub Releases
+
+jobs:
+  release:
+    runs-on: ubuntu-latest # Or macos-latest, windows-latest if you have specific build requirements
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for GoReleaser to get full Git history
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22' # Specify your Go version
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser # Use 'goreleaser' or 'goreleaser-pro' if you have a license
+          version: latest # Or a specific version, e.g., 'v1.24.0'
+          args: release --clean # '--clean' removes the dist folder after release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This is a secret provided by GitHub
