@@ -14,6 +14,27 @@ import (
 	"github.com/compose-spec/compose-go/v2/types"
 )
 
+// choose Fargate runtime platform
+func choosePlatform(service *types.ServiceConfig) *ecs.TaskDefinition_RuntimePlatform {
+	defaultPlatform := ecs.TaskDefinition_RuntimePlatform{
+		CpuArchitecture:       gocfn.String("ARM64"),
+		OperatingSystemFamily: gocfn.String("LINUX"),
+	}
+	platform := service.Platform
+	if platform == "linux/arm64" {
+		return &defaultPlatform
+	} else if platform == "linux/amd64" {
+		defaultPlatform.CpuArchitecture = gocfn.String("X86_64")
+		return &defaultPlatform
+	} else if platform == "" {
+		log.Printf("[warn] Platform not specified. Defaulting to %s.", "linux/arm64")
+		return &defaultPlatform
+	} else {
+		log.Printf("[warn] Unsupported platform: %s. Defaulting to %s. Please make a feature request to the autudock team if you need this platform.", platform, "linux/arm64")
+		return &defaultPlatform
+	}
+}
+
 // Generate Cloudformation templates for a service defined in the Compose file
 func GenerateServiceTemplate(project *types.Project, service *types.ServiceConfig, imageTag string) string {
 
@@ -81,10 +102,7 @@ func GenerateServiceTemplate(project *types.Project, service *types.ServiceConfi
 		Cpu:                     gocfn.String("1024"),
 		Memory:                  gocfn.String("2048"),
 		ExecutionRoleArn:        gocfn.String(gocfn.Ref(taskExecutionRoleResourceName)),
-		RuntimePlatform: &ecs.TaskDefinition_RuntimePlatform{
-			CpuArchitecture:       gocfn.String("ARM64"),
-			OperatingSystemFamily: gocfn.String("LINUX"),
-		},
+		RuntimePlatform:         choosePlatform(service),
 	}
 
 	// ALB

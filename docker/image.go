@@ -52,6 +52,7 @@ func BuildImage(ctx context.Context, service *composeTypes.ServiceConfig) string
 
 	buildOptions := types.ImageBuildOptions{
 		Dockerfile: buildConfig.Dockerfile,
+		Platform:   service.Platform,
 		Tags:       []string{imageTag},
 		Remove:     true, // Remove intermediate containers after a successful build
 	}
