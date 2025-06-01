@@ -2,8 +2,9 @@
 name: Release Go Binary
 
 on:
-  release:
-    types: [created] # Trigger this workflow when a new release is created
+  push: # Trigger on push events
+    tags: # Specifically when a new tag is pushed
+      - 'v*.*.*' # Matches tags starting with 'v' followed by dot-separated numbers
 
 permissions:
   contents: write # Grant write permissions to the workflow to create GitHub Releases
