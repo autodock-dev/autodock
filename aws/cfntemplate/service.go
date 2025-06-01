@@ -4,6 +4,7 @@ import (
 	"autodock/utils"
 	"fmt"
 	"log"
+	"os"
 
 	gocfn "github.com/awslabs/goformation/v7/cloudformation"
 	"github.com/awslabs/goformation/v7/cloudformation/ecs"
@@ -56,6 +57,18 @@ func GenerateServiceTemplate(project *types.Project, service *types.ServiceConfi
 	template.Resources[clusterResourceName] = &ecs.Cluster{
 		ClusterName: gocfn.String(fmt.Sprintf("%sCluster", service.Name)),
 	}
+
+	envVars := []ecs.TaskDefinition_KeyValuePair{}
+	for key := range service.Environment {
+		if val, exists := os.LookupEnv(key); !exists || val == "" {
+			log.Printf("[warn] Environment variable %s doesn't exist or is empty. Using empty string as the value.", key)
+		}
+
+		envVars = append(envVars, ecs.TaskDefinition_KeyValuePair{
+			Name:  gocfn.String(key),
+			Value: gocfn.String(os.Getenv(key)),
+		})
+	}
 	containerDefinition := ecs.TaskDefinition_ContainerDefinition{
 		Name:  service.ContainerName,
 		Image: imageTag,
@@ -73,6 +86,7 @@ func GenerateServiceTemplate(project *types.Project, service *types.ServiceConfi
 				"awslogs-stream-prefix": gocfn.Ref("AWS::StackName"),
 			},
 		},
+		Environment: envVars,
 	}
 
 	taskExecutionRoleResourceName := fmt.Sprintf("%sEcsTaskExecutionRole", service.Name)

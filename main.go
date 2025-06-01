@@ -75,9 +75,9 @@ func main() {
 		},
 	}
 
-	generateCmd := &cobra.Command{
-		Use:   "generate",
-		Short: "Generate Cloudformation templates from a Compose file",
+	synthCmd := &cobra.Command{
+		Use:   "synth",
+		Short: "SynthesizeCloudformation templates from a Compose file",
 		Run: func(cmd *cobra.Command, args []string) {
 			project := compose.Parse(composeFile)
 			bootstrapTemplate := cfntemplate.GenerateBootstrapTemplate(project)
@@ -107,7 +107,7 @@ func main() {
 	}
 
 	rootCmd.AddCommand(deployCmd)
-	rootCmd.AddCommand(generateCmd)
+	rootCmd.AddCommand(synthCmd)
 	rootCmd.AddCommand(bootstrapCmd)
 
 	// TODO: remove this in prod

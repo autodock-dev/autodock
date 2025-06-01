@@ -50,6 +50,7 @@ func BuildImage(ctx context.Context, service *composeTypes.ServiceConfig) string
 	}
 	defer tar.Close()
 
+	log.Printf("[debug] Building image for %s on platform %s", service.Name, service.Platform)
 	buildOptions := types.ImageBuildOptions{
 		Dockerfile: buildConfig.Dockerfile,
 		Platform:   service.Platform,
