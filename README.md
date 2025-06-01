@@ -25,12 +25,12 @@ autodock -f docker-compose.yml deploy
 - [ ] GCP support
 
 ## License
-The source code is available under the AGPL license.
+The source code is available under the AGPL license. The pre-built autodock binary is free for any purpose including commercial.
+
+## Pricing
+To financially support autodock development we may develop a commercial server component. However the pre-built autodock binary is always free for any purpose, and the source code is open source under AGPL license.
 
 ## Supporting autodock
-
-To financially support autodock development, we may charge commercial usages for the pre-built binaries. However, the source code will always be free and open source under AGPL license. You're freely to use the source code or build your own binary and use it for any purpose allowed by AGPL license.
-
 If you find autodock useful, please consider supporting it by giving it a star on GitHub.
 
 ## Contributing
