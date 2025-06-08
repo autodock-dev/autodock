@@ -56,6 +56,7 @@ func BuildImage(ctx context.Context, service *composeTypes.ServiceConfig) string
 		Platform:   service.Platform,
 		Tags:       []string{imageTag},
 		Remove:     true, // Remove intermediate containers after a successful build
+		BuildArgs:  buildConfig.Args,
 	}
 
 	// Build the image
